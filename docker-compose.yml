@@ -1,8 +1,26 @@
 version: '3'
 
 services:
-  www:
+  prod:
     build:
       context: .
     ports:
       - 8080:80
+
+  serve:
+    environment:
+      XDEBUG_REMOTE_HOST: ${XDEBUG_REMOTE_HOST}
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8080:80
+    volumes:
+      - ./src:/var/www/html
+    entrypoint: '
+      sh -ce "
+        export XDEBUG_CONFIG=\"remote_host=$${XDEBUG_REMOTE_HOST}\";
+
+        /entrypoint.sh;
+      "
+    '
